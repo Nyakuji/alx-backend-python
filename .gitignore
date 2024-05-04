@@ -1,0 +1,35 @@
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore environment and virtual environment directories
+env/
+venv/
+.venv/
+
+# Ignore local settings and configuration files
+.env
+.vscode/
+.idea/
+
+# Ignore log files and other generated files
+*.log
+*.csv
+*.dat
+*.db
+*.sqlite
+*.sql
+*.tar
+*.gz
+*.zip
+*.rar
+*.bak
+*.swp
+*.tmp
+*.pid
+*.pid.lock
+*.pid.lock.lock
+*.pid
+*main.py
