@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """testing utils module"""
 import unittest
+import utils
 from parameterized import parameterized
-from utils import access_nested_map
+from unittest.mock import patch, Mock
+from utils import access_nested_map, get_json
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -30,3 +32,28 @@ class TestAccessNestedMap(unittest.TestCase):
         with self.assertRaises(expected_exception) as context:
             access_nested_map(nested_map, path)
         self.assertEqual(expected_message, str(context.exception))
+
+
+class TestGetJson(unittest.TestCase):
+    """Class for testing"""
+    @patch('utils.requests.get')
+    def test_get_json(self, mock_get):
+        """Test that the function returns the expected result"""
+        test_cases = [
+            ('http://example.com', {'payload': True}),
+            ('http://holberton.io', {'payload': False})
+        ]
+        for test_url, test_payload in test_cases:
+            mock_get.return_value = Mock(json=Mock(return_value=test_payload))
+
+            # call the function with the test URL
+            response = utils.get_json(test_url)
+
+            # assert that the mock was called with the test URL
+            mock_get.assert_called_once_with(test_url)
+
+            # assert that the response is what is expected
+            self.assertEqual(response, test_payload)
+
+            # reset the mock
+            mock_get.reset_mock()
