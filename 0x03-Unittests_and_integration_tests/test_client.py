@@ -2,8 +2,9 @@
 """Unittests for the client module."""
 import unittest
 from unittest.mock import patch, PropertyMock
-from parameterized import parameterized
+from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
+from fixtures import TEST_PAYLOAD
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -57,3 +58,34 @@ class TestGithubOrgClient(unittest.TestCase):
         test_class = GithubOrgClient("google")
         result = test_class.has_license(repo, license_key)
         self.assertEqual(result, expected)
+
+
+@parameterized_class(
+    ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
+    TEST_PAYLOAD
+)
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Integration test for GithubOrgClient."""
+
+    @classmethod
+    def setUpClass(cls):
+        """Set up for all tests in the class."""
+        cls.get_patcher = patch(
+            'requests.get',
+            side_effect=cls.get_side_effect)
+        cls.get_patcher.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        """Tear down for all tests in the class."""
+        cls.get_patcher.stop()
+
+    @staticmethod
+    def get_side_effect(url):
+        """Side effect for requests.get."""
+        if url == "https://api.github.com/orgs/google":
+            return TestIntegrationGithubOrgClient.org_payload
+        elif url == "https://api.github.com/orgs/google/repos":
+            return TestIntegrationGithubOrgClient.repos_payload
+        else:
+            return None
