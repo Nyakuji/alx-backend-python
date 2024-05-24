@@ -3,7 +3,7 @@
 import unittest
 import utils
 from parameterized import parameterized
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 from utils import access_nested_map, get_json, memoize
 
 
@@ -44,14 +44,12 @@ class TestGetJson(unittest.TestCase):
             ('http://holberton.io', {'payload': False})
         ]
         for test_url, test_payload in test_cases:
-            mock_get.return_value.json.return_value = test_payload
-            self.assertEqual(get_json(test_url), test_payload)
-
-            # call the function again
-            self.assertEqual(get_json(test_url), test_payload)
-
-            # Reset the mock
-            mock_get.reset_mock()
+            for test_url, test_payload in test_cases:
+                mock_get.return_value.json.return_value = test_payload
+                result = get_json(test_url)
+                self.assertEqual(result, test_payload)
+                mock_get.assert_called_once_with(test_url)
+                mock_get.reset_mock()
 
 
 class TestMemoize(unittest.TestCase):
