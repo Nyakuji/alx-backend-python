@@ -75,11 +75,6 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             side_effect=cls.get_side_effect)
         cls.get_patcher.start()
 
-    @classmethod
-    def tearDownClass(cls):
-        """Tear down for all tests in the class."""
-        cls.get_patcher.stop()
-
     @staticmethod
     def get_side_effect(url):
         """Side effect for requests.get."""
@@ -128,3 +123,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             mock_get_json.assert_called_once_with(
                 "https://api.github.com/orgs/google/repos")
             mock_public_repos_url.assert_called_once()
+
+    @classmethod
+    def tearDownClass(cls):
+        """Clean up after all tests in the class."""
+        cls.get_patcher.stop()
